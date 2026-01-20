@@ -27,3 +27,4 @@ artifacts/
 .DS_Store
 Thumbs.db
 init_db_logs.txt
+DvlErrLog.txt
