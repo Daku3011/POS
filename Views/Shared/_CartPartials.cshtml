@@ -1,0 +1,38 @@
+﻿@model IEnumerable<EchoPOS.Models.CartView>
+
+@if (!Model.Any())
+{
+    <p>No items in cart.</p>
+}
+else
+{
+    <table class="table table-bordered table-sm">
+        <thead class="table-light">
+            <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Quantity</td>
+                    <td>₹@item.Price</td>
+                    <td>₹@item.Total_Price</td>
+                    <td>
+                        <form method="post" asp-action="RemoveFromCart" asp-controller="Cart">
+                            <input type="hidden" name="Cart_Id" value="@item.Cart_Id" />
+                            <input type="hidden" name="Table_Id" value="@item.Table_Id" />
+                            <button type="submit" class="btn btn-sm btn-danger">X</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

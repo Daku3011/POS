@@ -1,0 +1,135 @@
+﻿@model IEnumerable<EchoPOS.Models.Tables>
+
+@{
+    ViewData["Title"] = "Tables";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tables</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <style>
+        body {
+            background: linear-gradient(to right, #dc3545, #007bff);
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .btn-primary {
+            background-color: #ffffff;
+            color: #007bff;
+            font-weight: 600;
+            border: none;
+            margin-bottom: 20px;
+        }
+
+            .btn-primary:hover {
+                background-color: #e9ecef;
+            }
+
+        .table-card {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transition: transform 0.2s ease-in-out;
+            color: #333;
+        }
+
+            .table-card:hover {
+                transform: scale(1.02);
+            }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .card-text i {
+            margin-right: 6px;
+            color: #007bff;
+        }
+
+        .btn-sm i {
+            margin-right: 5px;
+        }
+
+        .action-buttons a {
+            min-width: 80px;
+        }
+
+        .container {
+            max-width: 1140px;
+        }
+    </style>
+</head>
+<body>
+    <h1><i class="bi bi-grid-3x3-gap-fill me-2"></i>Tables</h1>
+
+    <div class="text-center mb-4">
+        <a asp-action="Create" asp-controller="Tables" class="btn btn-primary">
+            <i class="bi bi-plus-circle-fill"></i> Create New Table
+        </a>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-4 d-flex align-items-stretch mb-4">
+                    <form id="form-@item.Table_Id" method="post" action="@Url.Action("Index", "POS_")" style="display: none;">
+                        <input type="hidden" name="Table_Id" value="@item.Table_Id" />
+                    </form>
+
+                    <div class="card shadow-sm border-0 table-card w-100" data-table-id="@item.Table_Id" style="cursor: pointer;">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Table @item.Table_Number</h5>
+                            <p class="card-text"><i class="bi bi-hash"></i>Table ID: @item.Table_Id</p>
+                            <p class="card-text"><i class="bi bi-people-fill"></i>Capacity: @item.Capacity</p>
+                            <p class="card-text"><i class="bi bi-lightbulb-fill"></i>Status: <strong>@item.Status</strong></p>
+                            <p class="card-text"><i class="bi bi-geo-alt-fill"></i><small>Location: @item.Location</small></p>
+                            <hr />
+                            <div class="d-flex justify-content-between action-buttons">
+                                <a asp-controller="Tables" asp-action="Edit" asp-route-id="@item.Table_Id" class="btn btn-warning btn-sm" onclick="event.stopPropagation();">
+                                    <i class="bi bi-pencil-fill"></i>Edit
+                                </a>
+                                <a asp-controller="Tables" asp-action="Delete" asp-route-id="@item.Table_Id" class="btn btn-danger btn-sm" onclick="event.stopPropagation();">
+                                    <i class="bi bi-trash-fill"></i>Delete
+                                </a>
+                                <a asp-controller="Tables" asp-action="Details" asp-route-id="@item.Table_Id" class="btn btn-info btn-sm" onclick="event.stopPropagation();">
+                                    <i class="bi bi-eye-fill"></i>View
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.table-card').forEach(card => {
+            card.addEventListener('click', function () {
+                const tableId = this.getAttribute('data-table-id');
+                const form = document.getElementById('form-' + tableId);
+                if (form) form.submit();
+            });
+        });
+    </script>
+</body>
+</html>

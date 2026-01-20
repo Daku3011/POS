@@ -1,0 +1,264 @@
+﻿@model List<EchoPOS.Models.CartView>
+@{
+    Layout = null;
+}
+@{
+    ViewBag.Title = "Cart";
+    var tableId = Model.FirstOrDefault()?.Table_Id ?? 0;
+    var userId = Model.FirstOrDefault()?.User_Id ?? 0;
+    var taxes = ViewBag.Taxes as List<EchoPOS.Models.Taxes> ?? new List<EchoPOS.Models.Taxes>();
+    var discounts = ViewBag.Discounts as List<EchoPOS.Models.Discounts> ?? new List<EchoPOS.Models.Discounts>();
+}
+
+<h5 class="mb-3">Your Cart</h5>
+
+@if (Model.Any())
+{
+    <div style="overflow-y: auto; max-height: 400px;">
+        <table class="table table-sm table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Item</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="cartBody">
+                @foreach (var item in Model)
+                {
+                    <tr data-cart-id="@item.Cart_Id">
+                        <td>@item.Name</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <button class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="updateQuantity(@item.Cart_Id, -1)">-</button>
+                                <span class="mx-2 quantity">@item.Quantity</span>
+                                <button class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="updateQuantity(@item.Cart_Id, 1)">+</button>
+                            </div>
+                        </td>
+                        <td class="price">@item.Price</td>
+                        <td class="item-total">@(item.Price * item.Quantity)</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm py-0 px-2" onclick="removeCartItem(@item.Cart_Id)"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <hr class="my-2">
+
+    <div class="mb-2">
+        <label class="form-label-sm">Tax</label>
+        <select class="form-select form-select-sm" id="taxSelect" onchange="updateTax()">
+            <option value="0">-- Select --</option>
+            @foreach (var tax in taxes)
+            {
+                <option value="@tax.Percentage">@tax.Name (@tax.Percentage%)</option>
+            }
+        </select>
+        <input type="hidden" id="tax" value="0" />
+    </div>
+
+    <div class="mb-2">
+        <label class="form-label-sm">Discount</label>
+        <select class="form-select form-select-sm" id="discountSelect" onchange="updateDiscount()">
+            <option value="0">-- Select --</option>
+            @foreach (var disc in discounts)
+            {
+                <option value="@disc.Value">@disc.Name (@disc.Value)</option>
+            }
+        </select>
+        <input type="hidden" id="discount" value="0" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label-sm">Grand Total</label>
+        <input type="text" id="grandTotal" class="form-control form-control-sm" readonly />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label-sm">Instructions</label>
+        <textarea id="specialInstruction" class="form-control form-control-sm" rows="2" placeholder="Add instructions"></textarea>
+    </div>
+
+    <div class="d-grid gap-2">
+        <form id="submitForm" method="post" action="/Cart/SubmitOrderKeepCart" class="d-inline">
+            <input type="hidden" name="tableId" value="@tableId" />
+            <input type="hidden" name="userId" value="@userId" />
+            <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-check-circle"></i> Submit (Keep)</button>
+        </form>
+        <button class="btn btn-primary btn-sm" onclick="closeOrderAndPrint()"><i class="fas fa-print"></i> Close & Print</button>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">Cart is empty.</div>
+}
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const tableId = @tableId;
+        const userId = @userId;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            recalculateTotal();
+        });
+
+        function updateTax() {
+            const taxRate = parseFloat($('#taxSelect').val()) || 0;
+            $('#tax').val(taxRate);
+            recalculateTotal();
+        }
+
+        function updateDiscount() {
+            const discountRate = parseFloat($('#discountSelect').val()) || 0;
+            $('#discount').val(discountRate);
+            recalculateTotal();
+        }
+
+        function recalculateTotal() {
+            let subtotal = 0;
+            $('#cartBody tr').each(function () {
+                const price = parseFloat($(this).find('.price').text());
+                const qty = parseInt($(this).find('.quantity').text());
+                const total = price * qty;
+                $(this).find('.item-total').text(total.toFixed(2));
+                subtotal += total;
+            });
+
+            const tax = parseFloat($('#tax').val()) || 0;
+            const discount = parseFloat($('#discount').val()) || 0;
+
+            const taxAmount = subtotal * (tax / 100);
+            const discountAmount = subtotal * (discount / 100);
+            const grandTotal = subtotal + taxAmount - discountAmount;
+
+            $('#grandTotal').val(grandTotal.toFixed(2));
+            $('#cartTotal').text('₹' + grandTotal.toFixed(2)); // Update the total in the main view if needed
+        }
+
+        function updateQuantity(cartId, change) {
+            $.ajax({
+                url: '/Cart/UpdateQuantity',
+                type: 'POST',
+                data: {
+                    cartId: cartId,
+                    change: change,
+                    tableId: tableId,
+                    userId: userId
+                },
+                success: function (res) {
+                    if (res.success) {
+                        const row = $('tr[data-cart-id="' + cartId + '"]');
+                        if (res.newQuantity <= 0) {
+                            row.remove();
+                        } else {
+                            row.find('.quantity').text(res.newQuantity);
+                            const price = parseFloat(row.find('.price').text());
+                            row.find('.item-total').text((price * res.newQuantity).toFixed(2));
+                        }
+                        recalculateTotal();
+                    } else {
+                        alert('Failed to update quantity.');
+                    }
+                },
+                error: function () {
+                    alert('Error updating quantity.');
+                }
+            });
+        }
+
+        function removeCartItem(cartId) {
+            $.post('/Cart/RemoveCartItem', { cartId: cartId, tableId: tableId, userId: userId }, function () {
+                $('tr[data-cart-id="' + cartId + '"]').remove();
+                recalculateTotal();
+            }).fail(function () {
+                alert("Error removing item from cart.");
+            });
+        }
+
+        function closeOrderAndPrint() {
+            const tax = parseFloat($('#tax').val()) || 0;
+            const discount = parseFloat($('#discount').val()) || 0;
+            const specialInstruction = $('#specialInstruction').val();
+
+            $.ajax({
+                url: '/Cart/CloseOrderAndPrint',
+                type: 'POST',
+                data: {
+                    tableId: tableId,
+                    userId: userId,
+                    tax: tax,
+                    discount: discount,
+                    specialInstruction: specialInstruction
+                },
+                success: function (html) {
+                    const printWin = window.open('', '', 'width=800,height=600');
+                    printWin.document.write(html);
+                    printWin.document.close();
+                    printWin.focus();
+                    printWin.print();
+                    printWin.close();
+                    location.reload();
+                },
+                error: function () {
+                    alert('Error closing order and printing.');
+                }
+            });
+        }
+    </script>
+}
+
+<style>
+    .table th, .table td {
+        padding: 0.5rem;
+        font-size: 0.9em;
+    }
+
+    .form-label-sm {
+        font-size: 0.8em;
+        margin-bottom: 0.2rem;
+    }
+
+    .form-select-sm, .form-control-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8em;
+        border-radius: 0.2rem;
+    }
+
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8em;
+        border-radius: 0.2rem;
+    }
+
+    .alert-info {
+        font-size: 0.9em;
+        padding: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    @@media print {
+        body {
+            font-size: 10px;
+            line-height: 1.3;
+        }
+
+        .table th, .table td {
+            font-size: 12px;
+            padding: 0.3rem;
+        }
+
+        #grandTotal {
+            font-size: 14px;
+        }
+    }
+</style>@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}

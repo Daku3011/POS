@@ -1,0 +1,38 @@
+﻿@model IEnumerable<EchoPOS.Models.Inventory>
+@{
+    Layout = "~/Views/Shared/EchoPOS.cshtml";
+    ViewBag.Title = "Inventory Management";
+}
+
+<!-- Title with Icon -->
+<h2 class="fw-bold text-center mt-4 mb-2">
+    <i class="bi bi-box-seam text-primary"></i> Inventory Management
+</h2>
+
+<!-- Create Button -->
+<div class="text-center mb-4">
+    <!-- You can add a create button here -->
+</div>
+
+<!-- Inventory Table -->
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Supplier Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ProductName</td>
+                <td>@item.Quantity</td>
+                <td>@item.Price</td>
+                <td>@item.SupplierName</td>
+            </tr>
+        }
+    </tbody>
+</table>

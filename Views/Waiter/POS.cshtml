@@ -1,0 +1,213 @@
+﻿
+@model EchoPOS.Models.MenuListViewModel
+
+@{
+    ViewData["Title"] = "Menu";
+    var cartItems = ViewBag.CartItems as List<EchoPOS.Models.CartView> ?? new List<EchoPOS.Models.CartView>();
+    var tableId = ViewBag.TableId;
+}
+
+<div class="container-fluid p-0">
+    <div class="d-flex flex-row" style="height: 100vh; overflow: hidden;">
+
+        <!-- LEFT: Categories Panel -->
+        <div class="categories-panel p-3 bg-light border-end" style="width: 200px; overflow-y: auto;">
+            <h5 class="mb-3">Categories</h5>
+            <div class="d-flex flex-column gap-2">
+                <div class="category-card active text-center p-2" data-id="0">All</div>
+                @foreach (var category in Model.Categories)
+                {
+                    <div class="category-card text-center p-2" data-id="@category.Category_Id">
+                        <h6>@category.Name</h6>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- CENTER: Menu Items -->
+        <div class="menu-items-panel flex-grow-1 p-4" style="overflow-y: auto;">
+            <h5 class="mb-3">Menu Items</h5>
+
+            <div class="mb-4 position-relative">
+                <input type="text" id="menuSearch" class="form-control pl-5" placeholder="Search for menu items..." />
+                <i class="fas fa-search position-absolute" style="top: 50%; left: 10px; transform: translateY(-50%); font-size: 18px; color: #ccc;"></i>
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                @foreach (var item in Model.MenuItems)
+                {
+                    <div class="col menu-card" data-category-id="@item.Category_Id" data-name="@item.Name.ToLower()">
+                        <div class="card h-100 shadow-sm d-flex flex-column">
+                            <img src="@item.Image_Url" class="card-img-top" style="height: 150px; object-fit: cover;" alt="@item.Name" />
+                            <div class="card-body d-flex flex-column">
+                                <h6 class="card-title">@item.Name</h6>
+                                <p class="text-muted small">@item.Description</p>
+                                <p><strong>₹@item.Price</strong></p>
+                                <p>
+                                    @if (item.Availability)
+                                    {
+                                        <span class="badge bg-success">Available</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Unavailable</span>
+                                    }
+                                </p>
+                                <div class="mt-auto">
+                                    <form method="post" asp-action="AddToCart" asp-controller="Cart">
+                                        <input type="hidden" name="Table_Id" value="@tableId" />
+                                        <input type="hidden" name="Menu_Item_Id" value="@item.Menu_Item_Id" />
+                                        <input type="hidden" name="Quantity" value="1" />
+                                        <input type="hidden" name="Name" value="@item.Name" />
+                                        <input type="hidden" name="Price" value="@item.Price" />
+                                        <button type="submit" class="btn btn-outline-primary w-100">
+                                            <i class="fas fa-cart-plus"></i> Add to Cart
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- RIGHT: Cart Panel -->
+        <!-- RIGHT: Cart Panel -->
+        <div class="cart-panel bg-white border-start p-3" style="width: 350px; min-width: 330px; overflow-y: auto;">
+            <div id="cartItems">
+                <!-- Here, the previous cart items or any content was being loaded -->
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const tableId = @ViewBag.TableId;
+
+        $(document).ready(function () {
+            // Load cart for selected table
+            loadCart(tableId);
+
+            function loadCart(tableId) {
+                $("#cartItems").load("/Cart/ViewCart?table_id=" + tableId);
+            }
+
+            // Category filtering
+            $('.category-card').click(function () {
+                const selectedId = $(this).data('id').toString();
+                $('.category-card').removeClass('active');
+                $(this).addClass('active');
+
+                $('.menu-card').each(function () {
+                    const itemCategory = $(this).data('category-id').toString();
+                    $(this).toggle(selectedId === "0" || itemCategory === selectedId);
+                });
+            });
+
+            // Live search
+            $('#menuSearch').on('input', function () {
+                const searchQuery = $(this).val().toLowerCase();
+                $('.menu-card').each(function () {
+                    const itemName = $(this).data('name');
+                    $(this).toggle(itemName.includes(searchQuery));
+                });
+            });
+
+            // Save button
+            $('#submitOrder').click(function () {
+                $.post("/Cart/SubmitOrder", { table_id: tableId }, function (response) {
+                    if (response.success) {
+                        alert("Order submitted successfully!");
+                        loadCart(tableId);
+                    } else {
+                        alert("Failed to submit order.");
+                    }
+                });
+            });
+
+            // Print bill button
+            $('#printBill').click(function () {
+                window.open("/Cart/PrintBill?table_id=" + tableId, "_blank");
+            });
+        });
+    </script>
+}
+
+<style>
+    .categories-panel {
+        width: 250px;
+        background-color: #f8f9fa;
+        border-right: 1px solid #ddd;
+        overflow-y: auto;
+    }
+
+    .menu-items-panel {
+        flex: 1;
+        overflow-y: auto;
+        background-color: #fff;
+    }
+
+    .cart-panel {
+        width: 300px;
+        background-color: #f8f9fa;
+        border-left: 1px solid #ddd;
+        overflow-y: auto;
+    }
+
+    .category-card {
+        cursor: pointer;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background: #fff;
+        text-align: center;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        transition: background 0.2s ease;
+    }
+
+        .category-card.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+    .menu-card {
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        background-color: #fff;
+        box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+    .card-img-wrapper {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-img-top {
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .menu-card:hover .card-img-top {
+        transform: scale(1.05);
+    }
+
+    .btn-outline-primary {
+        border-radius: 20px;
+        font-size: 14px;
+    }
+</style>

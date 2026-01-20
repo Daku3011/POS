@@ -1,0 +1,15 @@
+﻿@model IEnumerable<EchoPOS.Models.Menu>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title">@item.Name</h5>
+                    <p class="card-text text-muted">Price: @item.Price.ToString("C")</p>
+                </div>
+            </div>
+        </div>
+    }
+</div>

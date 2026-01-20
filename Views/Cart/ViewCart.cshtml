@@ -1,0 +1,228 @@
+﻿@model List<EchoPOS.Models.CartView>
+
+@{
+    ViewBag.Title = "Cart";
+    var tableId = Model.FirstOrDefault()?.Table_Id ?? 0;
+    var userId = Model.FirstOrDefault()?.User_Id ?? 0;
+    var taxes = ViewBag.Taxes as List<EchoPOS.Models.Taxes> ?? new List<EchoPOS.Models.Taxes>();
+    var discounts = ViewBag.Discounts as List<EchoPOS.Models.Discounts> ?? new List<EchoPOS.Models.Discounts>();
+
+}
+
+<h2>Cart</h2>
+
+@if (Model.Any())
+{
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="cartBody">
+            @foreach (var item in Model)
+            {
+                <tr data-cart-id="@item.Cart_Id">
+                    <td>@item.Name</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <button class="btn btn-sm btn-secondary" onclick="updateQuantity(@item.Cart_Id, -1)">-</button>
+                            <span class="mx-2 quantity">@item.Quantity</span>
+                            <button class="btn btn-sm btn-secondary" onclick="updateQuantity(@item.Cart_Id, 1)">+</button>
+                        </div>
+                    </td>
+                    <td class="price">@item.Price</td>
+                    <td class="item-total">@(item.Price * item.Quantity)</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="removeCartItem(@item.Cart_Id)">Remove</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label>Tax</label>
+            <select class="form-control" id="taxSelect" onchange="updateTax()">
+                <option value="0">-- Select Tax --</option>
+                @foreach (var tax in taxes)
+                {
+                    <option value="@tax.Percentage">@tax.Name (@tax.Percentage%)</option>
+                }
+            </select>
+            <input type="hidden" id="tax" value="0" />
+        </div>
+
+        <div class="col-md-4">
+            <label>Discount</label>
+            <select class="form-control" id="discountSelect" onchange="updateDiscount()">
+                <option value="0">-- Select Discount --</option>
+                @foreach (var disc in discounts)
+                {
+                    <option value="@disc.Value">@disc.Name (@disc.Value)</option>
+                }
+            </select>
+            <input type="hidden" id="discount" value="0" />
+        </div>
+
+        <div class="col-md-4">
+            <label>Grand Total</label>
+            <input type="text" id="grandTotal" class="form-control" readonly />
+        </div>
+    </div>
+
+
+    <div class="text-center">
+        <form id="submitForm" method="post" action="/Cart/SubmitOrderKeepCart" class="d-inline">
+            <input type="hidden" name="tableId" value="@tableId" />
+            <input type="hidden" name="userId" value="@userId" />
+            <button type="submit" class="btn btn-success">Submit Order (Keep Cart)</button>
+        </form>
+
+        <button class="btn btn-primary ml-2" onclick="closeOrderAndPrint()">Close Order (Print)</button>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">No items in cart.</div>
+}
+
+@section Scripts {
+    <script>
+        const tableId = @tableId;
+        const userId = @userId;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            recalculateTotal();
+        });
+
+        function updateTax() {
+            const taxRate = parseFloat($('#taxSelect').val()) || 0;
+            $('#tax').val(taxRate);
+            recalculateTotal();
+        }
+
+        function updateDiscount() {
+            const discountRate = parseFloat($('#discountSelect').val()) || 0;
+            $('#discount').val(discountRate);
+            recalculateTotal();
+        }
+
+        function recalculateTotal() {
+            let subtotal = 0;
+            $('#cartBody tr').each(function () {
+                const price = parseFloat($(this).find('.price').text());
+                const qty = parseInt($(this).find('.quantity').text());
+                const total = price * qty;
+                $(this).find('.item-total').text(total.toFixed(2)); // Remove dollar sign here
+                subtotal += total;
+            });
+
+            const tax = parseFloat($('#tax').val()) || 0;
+            const discount = parseFloat($('#discount').val()) || 0;
+
+            const taxAmount = subtotal * (tax / 100);
+            const discountAmount = subtotal * (discount / 100);
+            const grandTotal = subtotal + taxAmount - discountAmount;
+
+            $('#grandTotal').val(grandTotal.toFixed(2)); // Remove dollar sign here
+        }
+
+        function updateQuantity(cartId, change) {
+            $.ajax({
+                url: '/Cart/UpdateQuantity',
+                type: 'POST',
+                data: {
+                    cartId: cartId,
+                    change: change,
+                    tableId: tableId,
+                    userId: userId
+                },
+                success: function (res) {
+                    if (res.success) {
+                        const row = $('tr[data-cart-id="' + cartId + '"]');
+                        if (res.newQuantity <= 0) {
+                            row.remove();
+                        } else {
+                            row.find('.quantity').text(res.newQuantity);
+                            const price = parseFloat(row.find('.price').text());
+                            row.find('.item-total').text((price * res.newQuantity).toFixed(2));
+                        }
+                        recalculateTotal();
+                    } else {
+                        alert('Failed to update quantity.');
+                    }
+                },
+                error: function () {
+                    alert('Error updating quantity.');
+                }
+            });
+        }
+
+        function removeCartItem(cartId) {
+            $.post('/Cart/RemoveCartItem', { cartId: cartId, tableId: tableId, userId: userId }, function () {
+                $('tr[data-cart-id="' + cartId + '"]').remove();
+                recalculateTotal();
+            }).fail(function () {
+                alert("Error removing item from cart.");
+            });
+        }
+
+        function closeOrderAndPrint() {
+            const tax = parseFloat($('#taxSelect').val()) || 0;
+            const discount = parseFloat($('#discountSelect').val()) || 0;
+
+            // Default IDs to 1 if not found (assumes valid fallback rows in DB)
+            const taxId = parseInt($('#taxSelect option:selected').data('tax-id')) || 2;
+            const discountId = parseInt($('#discountSelect option:selected').data('discount-id')) || 6;
+
+            $.ajax({
+                url: '/Cart/CloseOrderAndPrint',
+                type: 'POST',
+                data: {
+                    tableId: tableId,
+                    taxId: taxId,
+                    discountId: discountId,
+                    tax: tax,
+                    discount: discount
+                },
+                success: function (html) {
+                    const printWin = window.open('', '', 'width=800,height=600');
+                    printWin.document.write(html);
+                    printWin.document.close();
+                    printWin.focus();
+                    printWin.print();
+                    printWin.close();
+                    location.reload();
+                },
+                error: function (xhr) {
+                    alert('Error closing order and printing: ' + xhr.responseText);
+                }
+            });
+        }
+
+
+    </script>
+}
+
+<style>
+    @@media print {
+        body {
+            font-size: 12px; /* Adjust the font size here */
+            line-height: 1.5;
+        }
+
+        .table th, .table td {
+            font-size: 14px; /* Adjust the size of table text */
+        }
+
+        #grandTotal {
+            font-size: 16px; /* Make the grand total larger */
+        }
+    }
+</style>

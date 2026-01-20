@@ -1,0 +1,208 @@
+﻿@model IEnumerable<EchoPOS.Models.Orders>
+@{
+    Layout = null;
+}
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<h2 class="mb-4">
+    <i class="bi bi-receipt-cutoff me-2"></i>Kitchen Pending Orders
+</h2>
+
+<!-- Sort Filter -->
+<div class="mb-3">
+    <label for="orderFilter" class="form-label fw-bold">
+        <i class="bi bi-sort-down-alt"></i> Sort Orders By
+    </label>
+    <select id="orderFilter" class="form-select w-auto d-inline-block ms-2" onchange="sortOrders()">
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+    </select>
+</div>
+
+<!-- Orders Grid -->
+<div class="row" id="orderList">
+    @foreach (var order in Model)
+    {
+        <div class="col-md-4 mb-4" data-order-id="@order.Order_Id" data-created="@order.Created_At.ToString("o")">
+            <div class="card shadow-sm border-0 h-100" style="border-radius: 20px; background-color: #fff8f0;">
+                <div class="card-body d-flex flex-column justify-content-between">
+
+                    <!-- Table Info -->
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="card-title fw-bold text-dark mb-0">
+                            <i class="bi bi-table me-1"></i>Table: @order.Table_Id
+                        </h5>
+                        <span class="badge status-badge @(order.Order_Status switch {
+                            "pending" => "bg-warning text-dark",
+                            "in process" => "bg-primary",
+                            "ready" => "bg-success",
+                            _ => "bg-secondary"
+                        })">
+                            <i class="bi @(order.Order_Status switch {
+                                "pending" => "bi-clock",
+                                "in process" => "bi-gear-fill",
+                                "ready" => "bi-check-circle",
+                                _ => "bi-question-circle"
+                            }) me-1"></i>
+                            @order.Order_Status
+                        </span>
+                    </div>
+
+                    <div class="text-muted mb-2" style="font-size: 0.85rem;">
+                        <i class="bi bi-clock-history me-1"></i>Created: @order.Created_At.ToString("g")
+                    </div>
+
+                    <!-- Mark Order In Process -->
+                    <div class="text-end mb-2">
+                        <button class="btn btn-sm btn-outline-primary"
+                                onclick="markOrderInProcess(@order.Order_Id)">
+                            <i class="bi bi-hourglass-split me-1"></i> Mark In Process
+                        </button>
+                    </div>
+
+                    <!-- Order Items -->
+                    <div class="order-items overflow-auto mt-2" style="max-height: 200px;">
+                        @if (order.OrderItems != null && order.OrderItems.Any())
+                        {
+                            @foreach (var item in order.OrderItems)
+                            {
+                                <div class="p-2 mb-2 rounded d-flex justify-content-between align-items-center"
+                                     style="background-color: #ffe8cc;"
+                                     data-order-item-id="@item.Order_Item_Id">
+
+                                    <div>
+                                        <div class="fw-bold">
+                                            <i class="bi bi-egg-fried me-1"></i>@item.Menu_Item_Name
+                                        </div>
+                                        <div><i class="bi bi-plus-square-dotted me-1"></i>Qty: @item.Quantity</div>
+                                        @if (!string.IsNullOrEmpty(item.Special_Instructions))
+                                        {
+                                            <div class="text-muted fst-italic small">
+                                                <i class="bi bi-chat-left-text me-1"></i>Note: @item.Special_Instructions
+                                            </div>
+                                        }
+                                    </div>
+
+                                    <button class="btn btn-sm btn-outline-warning"
+                                            onclick="updateItemStatus(@item.Order_Item_Id, 'ready')">
+                                        <i class="bi bi-check2-circle me-1"></i> Ready
+                                    </button>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-muted"><i class="bi bi-info-circle me-1"></i>No items found.</p>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Styles -->
+<style>
+    .card:hover {
+        transform: scale(1.02);
+        transition: 0.3s ease-in-out;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .status-badge {
+        font-size: 0.85rem;
+        padding: 0.4em 0.6em;
+        border-radius: 0.5rem;
+    }
+
+    .btn-md {
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+    }
+
+    .btn-outline-primary {
+        border-color: #007bff;
+        color: #007bff;
+    }
+
+        .btn-outline-primary:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+    .btn-outline-warning {
+        border-color: #fd7e14;
+        color: #fd7e14;
+    }
+
+        .btn-outline-warning:hover {
+            background-color: #fd7e14;
+            color: white;
+        }
+</style>
+
+<!-- Scripts -->
+<script>
+    function sortOrders() {
+        const filter = document.getElementById('orderFilter').value;
+        const orderList = document.getElementById('orderList');
+        const cards = Array.from(orderList.children);
+
+        cards.sort((a, b) => {
+            const dateA = new Date(a.dataset.created);
+            const dateB = new Date(b.dataset.created);
+            return filter === 'newest' ? dateB - dateA : dateA - dateB;
+        });
+
+        cards.forEach(card => orderList.appendChild(card));
+    }
+
+    document.addEventListener('DOMContentLoaded', sortOrders);
+
+    function markOrderInProcess(orderId) {
+        $.post('/KitchenDashBoard/MarkOrderInProcess', { orderId }, function (res) {
+            if (res.success) {
+                const card = $(`[data-order-id='${orderId}']`);
+                card.find('.status-badge')
+                    .removeClass('bg-warning bg-secondary')
+                    .addClass('bg-primary text-white')
+                    .html('<i class="bi bi-gear-fill me-1"></i>in process');
+            } else {
+                alert('Failed to mark as in process: ' + res.message);
+            }
+        });
+    }
+
+    function updateItemStatus(orderItemId, orderitemstatus) {
+        $.post('/KitchenDashBoard/UpdateOrderItemStatus', { orderItemId, orderitemstatus }, function (res) {
+            if (res.success) {
+                const itemCard = $(`[data-order-item-id='${orderItemId}']`);
+                const orderCard = itemCard.closest('[data-order-id]');
+
+                itemCard.fadeOut(() => {
+                    itemCard.remove();
+
+                    const remainingItems = orderCard.find('[data-order-item-id]:visible');
+                    if (remainingItems.length === 0) {
+                        const orderId = orderCard.data('order-id');
+                        $.post('/KitchenDashBoard/MarkOrderCompleted', { orderId }, function (orderRes) {
+                            if (orderRes.success) {
+                                orderCard.fadeOut(() => orderCard.remove());
+                            } else {
+                                alert('Failed to complete order: ' + orderRes.message);
+                            }
+                        });
+                    }
+                });
+            } else {
+                alert('Item status update failed: ' + res.message);
+            }
+        });
+    }
+</script>

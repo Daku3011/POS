@@ -1,0 +1,134 @@
+﻿
+@{
+    ViewData["Title"] = "Cashier Dashboard";
+    Layout = null;
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<style>
+    html, body {
+        height: 100%;
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(180deg, #1a2a6c, #b21f1f);
+        overflow: hidden;
+    }
+
+    .page-layout {
+        display: flex;
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
+    }
+
+    .sidebar {
+        width: 260px;
+        background: linear-gradient(180deg, #1a2a6c, #b21f1f); /* Gradient colors */
+        color: white;
+        padding: 20px 10px;
+        height: 100vh;
+        overflow-y: auto;
+    }
+
+    .sidebar-button {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        text-align: left;
+        width: 100%;
+        cursor: pointer;
+        transition: background 0.3s, transform 0.2s;
+    }
+
+        .sidebar-button i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+
+    .sidebar a {
+        color: white;
+        text-decoration: none;
+        display: block;
+        padding: 12px 16px;
+        margin-top: 20px;
+        background-color: #dc3545;
+        border-radius: 6px;
+        transition: background 0.3s ease;
+    }
+
+        .sidebar a:hover {
+            background-color: #c82333;
+            color: #fff;
+        }
+
+    .content {
+        flex: 1;
+        background: linear-gradient(180deg, #1a2a6c, #b21f1f);
+        padding: 30px;
+        overflow-y: auto;
+    }
+
+    #content-display {
+        background: linear-gradient(180deg, #1a2a6c, #b21f1f); /* Match sidebar gradient */
+        border-radius: 8px;
+        padding: 30px;
+        color: white; /* Ensure text is readable */
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+        min-height: 300px;
+    }
+
+    h2 {
+        font-weight: 600;
+    }
+</style>
+
+<body>
+    <div class="page-layout">
+        <div class="sidebar">
+            <button class="sidebar-button" onclick="loadSection('@Url.Action("Bill", "Cashier")')">Bill</button>
+            <button class="sidebar-button" onclick="loadSection('@Url.Action("Tables", "Cashier")')">Tables</button>
+            <button class="sidebar-button" onclick="loadSection('@Url.Action("Menu", "Cashier")')">Menu</button>
+            <button class="sidebar-button" onclick="loadSection('@Url.Action("Category", "Cashier")')">Category</button>
+            
+            <button class="sidebar-button" onclick="loadSection('@Url.Action("Orders", "Cashier")')">Orders Pending</button>
+            <button class="sidebar-button" onclick="loadSection('@Url.Action("OrderReady", "Cashier")')">Orders Ready</button>
+            <button class="sidebar-button" onclick="loadSection('@Url.Action("Expenses", "Cashier")')">Expenses</button>
+            <a href="@Url.Action("Index", "Login")" class="btn btn-danger w-100 d-flex align-items-center justify-content-center mt-4">
+                <i class="bi bi-box-arrow-left me-2"></i> Logout
+            </a>
+        </div>
+
+        <div class="content">
+            <div id="content-display">
+                <h2>Welcome to the Cashier Dashboard</h2>
+                <p>Select an option from the left panel to manage transactions.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function loadSection(url) {
+            $("#content-display").html('<p>Loading...</p>');
+
+            $.get(url, function (data) {
+                $("#content-display").html(data);
+            }).fail(function (xhr) {
+                $("#content-display").html('<p>Error loading content. ' + xhr.status + ' - ' + xhr.statusText + '</p>');
+            });
+        }
+    </script>
+</body>
+```

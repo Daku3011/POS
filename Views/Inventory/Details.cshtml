@@ -1,0 +1,101 @@
+﻿@model Inventory
+
+@{
+    ViewData["Title"] = "Inventory Details";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <style>
+        body {
+            background: linear-gradient(to right, #dc3545, #007bff);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+
+        .details-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            color: #000;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .info p, .info h4 {
+            margin-bottom: 15px;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            border: none;
+        }
+
+            .btn-warning:hover {
+                background-color: #e0a800;
+            }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+        }
+
+            .btn-secondary:hover {
+                background-color: #5a6268;
+            }
+    </style>
+</head>
+<body>
+    <div class="details-container">
+        <div class="card">
+            <h2>
+                <i class="bi bi-box-seam me-2 text-warning"></i> Inventory Details
+            </h2>
+            <div class="info">
+                <h4>Product Name: @Model.ProductName</h4>
+                <p><strong>Quantity:</strong> @Model.Quantity</p>
+                <p><strong>Price:</strong> @Model.Price</p>
+                <p><strong>Supplier ID:</strong> @Model.Supplier_ID</p>
+                <p><strong>Last Updated:</strong> @Model.LastUpdated.ToString("yyyy-MM-dd HH:mm")</p>
+            </div>
+
+            <div class="btn-group">
+                <a asp-action="Edit" asp-route-id="@Model.InventoryID" class="btn btn-warning w-50">
+                    <i class="bi bi-pencil-square me-2"></i> Edit
+                </a>
+                <a asp-action="Index" asp-controller="Admin" class="btn btn-secondary w-50">
+                    <i class="bi bi-arrow-left-circle me-2"></i> Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

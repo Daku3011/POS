@@ -1,0 +1,39 @@
+﻿@{
+    Layout = "_KitchenLayout";
+}
+
+
+@model IEnumerable<EchoPOS.Models.Tables>
+
+<div class="container">
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="custom-card shadow-sm">
+                    <div class="card-body text-center">
+                        <h4 class="card-title mb-3">Table @item.Table_Number</h4>
+
+                        <p class="mb-2">
+                            <strong>🪑 Capacity:</strong> @item.Capacity
+                        </p>
+
+                        <p class="mb-2">
+                            <strong>Status:</strong>
+                            <span class="badge
+                                @(item.Status == "Available" ? "bg-success" :
+                                  item.Status == "Occupied" ? "bg-danger" :
+                                  "bg-secondary")">
+                                @item.Status
+                            </span>
+                        </p>
+
+                        <p class="text-muted mb-0">
+                            📍 Location: @item.Location
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

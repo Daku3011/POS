@@ -1,0 +1,41 @@
+﻿@model IEnumerable<EchoPOS.Models.Menu>
+
+<h2 class="text-center">Menu</h2>
+
+<div class="row">
+    @if (Model != null && Model.Any())
+    {
+        foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">@item.Name</h5>
+                        <p class="card-text text-muted">@item.Description</p>
+                        <p class="card-text"><strong>Price:</strong> $@item.Price</p>
+                        <p class="card-text">
+                            <strong>Availability:</strong>
+                            @if (item.Availability)
+                            {
+                                <span class="text-success">In Stock</span>
+                            }
+                            else
+                            {
+                                <span class="text-danger">Out of Stock</span>
+                            }
+                        </p>
+                        <p class="card-text"><strong>Category:</strong> @item.Category?.Name</p>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12">
+            <div class="alert alert-warning text-center">
+                No menu items available.
+            </div>
+        </div>
+    }
+</div>

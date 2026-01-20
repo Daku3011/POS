@@ -1,0 +1,127 @@
+﻿@model EchoPOS.Models.Reservations
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Reservation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(to right, #dc3545, #007bff);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .form-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            border-radius: 8px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .form-label {
+            font-weight: bold;
+        }
+
+        .btn-success, .btn-secondary {
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+            border: none;
+        }
+
+            .btn-success:hover {
+                background-color: #218838;
+            }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+        }
+
+            .btn-secondary:hover {
+                background-color: #5a6268;
+            }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="card">
+            <h2><i class="bi bi-pencil-square"></i> Edit Reservation</h2>
+
+            <form asp-controller="Reservations" asp-action="Edit" method="post">
+                <input type="hidden" asp-for="Reservation_Id" />
+
+                <div class="mb-3">
+                    <label asp-for="User_Id" class="form-label"></label>
+                    <select asp-for="User_Id" class="form-control" asp-items="ViewBag.User_Id">
+                        <option value="">-- Select User --</option>
+                    </select>
+                    <span asp-validation-for="User_Id" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Table_Id" class="form-label">Table</label>
+                    <select asp-for="Table_Id" class="form-control" asp-items="ViewBag.Table_Id" disabled>
+                        <option value="">-- Select Table --</option>
+                    </select>
+                    <span asp-validation-for="Table_Id" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Reservation_Date" class="form-label"></label>
+                    <input asp-for="Reservation_Date" type="datetime-local" class="form-control" />
+                    <span asp-validation-for="Reservation_Date" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Status" class="form-label"></label>
+                    <select asp-for="Status" class="form-control">
+                        <option value="confirmed">Confirmed</option>
+                        <option value="canceled">Canceled</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-circle"></i> Update
+                    </button>
+                    <a asp-action="Index" asp-controller="Admin" class="btn btn-secondary ms-2">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

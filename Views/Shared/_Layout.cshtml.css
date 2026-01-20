@@ -1,0 +1,50 @@
+﻿/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+a.navbar-brand {
+    white-space: normal; /* Allow brand text to wrap */
+    text-align: center; /* Center-align the brand text */
+    word-break: break-word; /* Break long words if necessary */
+}
+
+a {
+    color: #0077cc; /* Set default color for links */
+    text-decoration: none; /* Optional: remove underline from links */
+}
+
+.btn-primary {
+    color: #fff; /* White text on primary button */
+    background-color: #1b6ec2; /* Primary button background color */
+    border-color: #1861ac; /* Button border color */
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    color: #fff; /* White text for active nav-link */
+    background-color: #1b6ec2; /* Active nav-link background */
+    border-color: #1861ac; /* Active nav-link border */
+}
+
+.border-top {
+    border-top: 1px solid #e5e5e5; /* Light gray top border */
+}
+
+.border-bottom {
+    border-bottom: 1px solid #e5e5e5; /* Light gray bottom border */
+}
+
+.box-shadow {
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); /* Subtle shadow */
+}
+
+button.accept-policy {
+    font-size: 1rem; /* Set font size for the button */
+    line-height: inherit; /* Inherit line height for consistency */
+}
+
+.footer {
+    position: absolute; /* Position the footer at the bottom */
+    bottom: 0; /* Ensure the footer sticks to the bottom */
+    width: 100%; /* Full width for the footer */
+    white-space: nowrap; /* Prevent text from wrapping */
+    line-height: 60px; /* Set line height for footer */
+}

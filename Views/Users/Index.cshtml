@@ -1,0 +1,33 @@
+﻿@model IEnumerable<EchoPOS.Models.Users>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Users</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">@item.Name</h5>
+                    <p class="card-text">
+                        <strong>Email:</strong> @item.Email <br>
+                        <strong>Role:</strong> @item.Role <br>
+                        <strong>Phone:</strong> @item.Phone <br>
+                    </p>
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Edit" asp-route-id="@item.User_Id" class="btn btn-warning btn-sm">Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.User_Id" class="btn btn-info btn-sm">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.User_Id" class="btn btn-danger btn-sm">Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

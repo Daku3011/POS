@@ -1,0 +1,35 @@
+﻿@model IEnumerable<EchoPOS.Models.Taxes>
+
+@{
+    ViewData["Title"] = "Taxes List";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>
+    <a href="@Url.Action("Create")" class="btn btn-primary">Create New Tax</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Tax Name</th>
+            <th>Percentage</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var tax in Model)
+        {
+            <tr>
+                <td>@tax.Name</td>
+                <td>@tax.Percentage%</td>
+                <td>
+                    <a href="@Url.Action("Details", new { id = tax.Tax_Id })" class="btn btn-info">Details</a>
+                    <a href="@Url.Action("Edit", new { id = tax.Tax_Id })" class="btn btn-warning">Edit</a>
+                    <a href="@Url.Action("Delete", new { id = tax.Tax_Id })" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,56 @@
+﻿@model IEnumerable<EchoPOS.Models.Discounts>
+
+@{
+    ViewData["Title"] = "Discounts";
+    Layout = null;
+}
+
+<!-- Page Title with Icon -->
+<h2 class="fw-bold text-center mt-4 mb-3">
+    <i class="bi bi-percent me-1"></i>  Discounts
+</h2>
+
+<!-- Create Button with Icon -->
+<div class="text-center mb-4">
+    <a asp-action="Create" asp-controller="Discounts" class="btn btn-success">
+        <i class="bi bi-plus-circle-fill me-1"></i> Create New Discount
+    </a>
+</div>
+
+<!-- Discounts Table -->
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th> Name</th>
+            <th> Discount Type</th>
+            <th> Value</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var discount in Model)
+        {
+            <tr>
+                <td>@discount.Name</td>
+                <td>@discount.Discount_Type</td>
+                <td>@discount.Value</td>
+                <td>@discount.Start_Date.ToShortDateString()</td>
+                <td>@discount.End_Date.ToShortDateString()</td>
+                <td>
+                    <a asp-action="Edit" asp-controller="Discounts" asp-route-id="@discount.Discount_Id" class="btn btn-warning btn-sm me-1">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </a>
+                    <a asp-action="Details" asp-controller="Discounts" asp-route-id="@discount.Discount_Id" class="btn btn-info btn-sm me-1">
+                        <i class="bi bi-eye-fill"></i> Details
+                    </a>
+                    <a asp-action="Delete" asp-controller="Discounts" asp-route-id="@discount.Discount_Id" class="btn btn-danger btn-sm"
+                       onclick="return confirm('Are you sure you want to delete this discount?');">
+                        <i class="bi bi-trash-fill"></i> Delete
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

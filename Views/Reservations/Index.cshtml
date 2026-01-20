@@ -1,0 +1,41 @@
+﻿@model IEnumerable<EchoPOS.Models.Reservations>
+
+<h2 class="text-center mt-4">Reservations</h2>
+
+<div class="text-end mb-3">
+    <a asp-action="Create" class="btn btn-primary">Add New Reservation</a>
+</div>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>User Name</th>
+            <th>Table Name</th>
+            <th>Reservation Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var reservation in Model)
+        {
+            <tr>
+                <td>@reservation.Name</td>
+                <td>@reservation.Table_Number</td>
+                <td>@reservation.Reservation_Date.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>
+                    <span class="badge @(reservation.Status == "confirmed" ? "bg-success" : (reservation.Status == "canceled" ? "bg-danger" : "bg-warning"))">
+                        @reservation.Status
+                    </span>
+                </td>
+                <td>
+                    <!-- Correct the link to pass the Reservation_Id properly -->
+                    <a asp-action="Edit" asp-route-id="@reservation.Reservation_Id" class="btn btn-warning btn-sm">Edit</a>
+
+                    <a asp-action="Details" asp-route-id="@reservation.Reservation_Id" class="btn btn-info btn-sm">Details</a>
+                    <a asp-action="Delete" asp-route-id="@reservation.Reservation_Id" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

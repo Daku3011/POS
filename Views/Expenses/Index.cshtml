@@ -1,0 +1,105 @@
+﻿@model List<EchoPOS.Models.Expenses>
+
+@{
+    ViewData["Title"] = "Expense List";
+    string selectedFilter = Context.Request.Query["filter"];
+}
+
+<div class="container mt-4">
+    <h3>Expense List</h3>
+
+    <div class="mb-3">
+        <a asp-action="Create" class="btn btn-success">+ Add Expense</a>
+    </div>
+
+    <!-- Filter Dropdown -->
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <label for="filterType" class="form-label font-weight-bold">Filter Expenses:</label>
+            <select id="filterType" class="form-control">
+                <option value="">-- All --</option>
+                <option value="Today">Today</option>
+                <option value="ThisWeek">This Week</option>
+                <option value="ThisMonth">This Month</option>
+                <option value="ThisYear">This Year</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Show Selected Filter Label -->
+    @if (!string.IsNullOrEmpty(selectedFilter))
+    {
+        string filterLabel = selectedFilter switch
+        {
+            "Today" => "Showing expenses for: Today",
+            "ThisWeek" => "Showing expenses for: This Week",
+            "ThisMonth" => "Showing expenses for: This Month",
+            "ThisYear" => "Showing expenses for: This Year",
+            _ => ""
+        };
+
+        <p class="mb-3 text-muted font-weight-bold">@filterLabel</p>
+    }
+
+    <!-- Expenses Table -->
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Date</th>
+                <th>Category</th>
+                <th>Amount (₹)</th>
+                <th>Note</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Date.ToString("dd-MM-yyyy")</td>
+                        <td>@item.Category</td>
+                        <td>@item.Amount.ToString("0.00")</td>
+                        <td>@item.Note</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">View</a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5" class="text-center">No expenses found for this filter.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- JavaScript for Dropdown Filter -->
+<script>
+    document.getElementById("filterType").addEventListener("change", function () {
+        const selectedFilter = this.value;
+        const url = new URL(window.location.href);
+        if (selectedFilter) {
+            url.searchParams.set("filter", selectedFilter);
+        } else {
+            url.searchParams.delete("filter");
+        }
+        window.location.href = url.toString();
+    });
+
+    // Set selected dropdown value on page load
+    window.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const selected = urlParams.get("filter");
+        if (selected) {
+            document.getElementById("filterType").value = selected;
+        }
+    });
+</script>
+    

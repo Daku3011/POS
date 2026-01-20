@@ -1,0 +1,73 @@
+﻿@model IEnumerable<OrderHistoryViewModel>
+@{
+    Layout = null;
+    var groupedOrders = Model.GroupBy(o => new
+    {
+        o.Order_Id,
+        o.Order_Status,
+        o.Total_Amount,
+        o.Created_At,
+        o.Updated_At
+    });
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Order History</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center fw-bold mb-4">Order History</h2>
+
+        <!-- You can add a filter form here if needed -->
+
+        <div class="row">
+            @if (!groupedOrders.Any())
+            {
+                <div class="col-12">
+                    <div class="alert alert-info text-center">No orders found for selected filter.</div>
+                </div>
+            }
+            else
+            {
+                foreach (var group in groupedOrders)
+                {
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow border-primary">
+                            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                                <strong><i class="bi bi-receipt-cutoff me-2"></i>Order #@group.Key.Order_Id</strong>
+                                <span class="badge bg-light text-primary fw-semibold">@group.Key.Order_Status</span>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Total Amount:</strong> ₹@group.Key.Total_Amount</p>
+                                <hr />
+                                <h6 class="text-secondary">Items</h6>
+                                <ul class="list-group">
+                                    @foreach (var item in group)
+                                    {
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>@item.Menu_Item_Name</strong><br />
+                                                Qty: @item.Quantity, ₹@item.Price<br />
+                                                <small><i class="bi bi-info-circle-fill text-info"></i> Status: @item.Order_Item_Status</small>
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                            <div class="card-footer text-muted small">
+                                <div><i class="bi bi-clock-history me-1"></i><strong>Created:</strong> @group.Key.Created_At.ToString("g")</div>
+                                <div><i class="bi bi-pencil-square me-1"></i><strong>Updated:</strong> @group.Key.Updated_At.ToString("g")</div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</body>
+</html>

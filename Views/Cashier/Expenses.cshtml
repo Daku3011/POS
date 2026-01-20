@@ -1,0 +1,110 @@
+﻿@model List<EchoPOS.Models.Expenses>
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Expense List";
+    var selectedFilter = ViewContext.HttpContext.Request.Query["filter"].ToString();
+
+
+    var filterLabel = selectedFilter switch
+    {
+        "Today" => "Showing expenses for: Today",
+        "ThisWeek" => "Showing expenses for: This Week",
+        "ThisMonth" => "Showing expenses for: This Month",
+        "ThisYear" => "Showing expenses for: This Year",
+        _ => null
+    };
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+}
+
+
+<body>
+    <div class="container mt-4">
+        <h3>@ViewData["Title"]</h3>
+
+        <div class="mb-3">
+            <a asp-action="Create" asp-controller="Expenses" class="btn btn-success">+ Add Expense</a>
+        </div>
+
+        <!-- Filter Dropdown -->
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <label for="filterType" class="form-label fw-bold">Filter Expenses:</label>
+                <select id="filterType" class="form-select">
+                    <option value="">-- All --</option>
+                    <option value="Today">Today</option>
+                    <option value="ThisWeek">This Week</option>
+                    <option value="ThisMonth">This Month</option>
+                    <option value="ThisYear">This Year</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Selected Filter Label -->
+        @if (!string.IsNullOrWhiteSpace(filterLabel))
+        {
+            <p class="mb-3 text-muted fw-bold">@filterLabel</p>
+        }
+
+        <!-- Expenses Table -->
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Amount (₹)</th>
+                    <th>Note</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model is { Count: > 0 })
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Date.ToString("dd-MM-yyyy")</td>
+                            <td>@item.Category</td>
+                            <td>@item.Amount.ToString("0.00")</td>
+                            <td>@item.Note</td>
+                            <td>
+                                <a asp-action="Edit" asp-controller="Expenses" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Edit</a>
+                                <a asp-action="Delete" asp-controller="Expenses" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                                <a asp-action="Details" asp-controller="Expenses    " asp-route-id="@item.Id" class="btn btn-sm btn-info">View</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">No expenses found for this filter.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById("filterType")?.addEventListener("change", function () {
+            const selectedFilter = this.value;
+            const url = new URL(window.location.href);
+            if (selectedFilter) {
+                url.searchParams.set("filter", selectedFilter);
+            } else {
+                url.searchParams.delete("filter");
+            }
+            window.location.href = url.toString();
+        });
+
+        window.addEventListener("DOMContentLoaded", function () {
+            const selected = new URLSearchParams(window.location.search).get("filter");
+            if (selected) {
+                document.getElementById("filterType").value = selected;
+            }
+        });
+    </script>
+</body>
+</html>

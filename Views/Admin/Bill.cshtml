@@ -1,0 +1,169 @@
+﻿@model List<EchoPOS.Models.BillViewModel>
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>All Bills</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .white-bg {
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <!-- Payment Summary Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card bg-success text-white text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Cash Collection</h5>
+                        <p class="card-text">₹ @ViewBag.CashTotal</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info text-white text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">UPI Collection</h5>
+                        <p class="card-text">₹ @ViewBag.UPITotal</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-primary text-white text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Card Collection</h5>
+                        <p class="card-text">₹ @ViewBag.CardTotal</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-dark text-white text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Collection</h5>
+                        <p class="card-text">₹ @ViewBag.GrandTotal</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bill List -->
+        <div class="white-bg">
+            <h2 class="mb-4">All Bills</h2>
+            <table class="table table-bordered table-striped" id="billsTable">
+                <thead class="table-light">
+                    <tr>
+                        <th>Bill ID</th>
+                        <th>Order ID</th>
+                        <th>Tax (%)</th>
+                        <th>Discount (₹)</th>
+                        <th>Total (₹)</th>
+                        <th>Created At</th>
+                        <th>Order Status</th>
+                        <th>Payment Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var bill in Model)
+                    {
+                        <tr>
+                            <td>@bill.Bill_Id</td>
+                            <td>@bill.Order_Id</td>
+                            <td>@bill.Tax_Percentage</td>
+                            <td>@bill.Discount_Value</td>
+                            <td>@bill.Total</td>
+                            <td>@bill.Created_At.ToString("g")</td>
+                            <td>@bill.Order_Status</td>
+                            <td class="payment-status">@bill.Payment_Status_Name</td>
+                            <td>
+                                <a asp-controller="Bill" asp-action="Bill" asp-route-orderId="@bill.Order_Id" class="btn btn-sm btn-primary">Details</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            // Remove paid rows
+            $('#billsTable tbody tr').each(function () {
+                var status = $(this).find('.payment-status').text().trim().toLowerCase();
+                if (status === 'paid') {
+                    $(this).remove();
+                }
+            });
+
+            function isMidnight() {
+                const now = new Date();
+                return now.getHours() === 0 && now.getMinutes() === 0;
+            }
+
+            function resetCardsToZero() {
+                $('.card').each(function () {
+                    $(this).find('.card-text').text("₹ 0.00");
+                });
+            }
+
+            function loadPaymentSummary() {
+                // If time is 12:00 AM exactly, reset cards
+                if (isMidnight()) {
+                    resetCardsToZero();
+                    return;
+                }
+
+                // Otherwise, fetch data from server
+                $.ajax({
+                    url: '/Bill/GetPaymentSummary',
+                    method: 'GET',
+                    success: function (data) {
+                        $('.card').each(function () {
+                            const title = $(this).find('.card-title').text().trim().toLowerCase();
+                            let value = 0;
+
+                            if (title.includes('cash')) {
+                                value = data.cash || 0;
+                            } else if (title.includes('upi')) {
+                                value = data.upi || 0;
+                            } else if (title.includes('card')) {
+                                value = data.card || 0;
+                            } else if (title.includes('total')) {
+                                value = data.grand || 0;
+                            }
+
+                            $(this).find('.card-text').text("₹ " + parseFloat(value).toFixed(2));
+                        });
+                    },
+                    error: function () {
+                        console.error('Error fetching payment summary.');
+                    }
+                });
+            }
+
+            // Initial load
+            loadPaymentSummary();
+
+            // Refresh every 60 sec
+            setInterval(loadPaymentSummary, 60000);
+        });
+    </script>
+</body>
+</html>

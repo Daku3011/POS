@@ -1,0 +1,128 @@
+﻿@model EchoPOS.Models.Users
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>User Details</title>
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        body {
+            background: linear-gradient(to right, #dc3545, #007bff);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .details-container {
+            background-color: #fff;
+            margin-top: 60px;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        th {
+            text-align: left;
+            width: 30%;
+            padding: 10px;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            color: #555;
+        }
+
+        .btn {
+            display: inline-block;
+            text-align: center;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 15px;
+            margin-right: 10px;
+            transition: background 0.3s ease;
+        }
+
+            .btn i {
+                margin-right: 8px;
+            }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+            .btn-secondary:hover {
+                background-color: #5a6268;
+            }
+
+        .btn-warning {
+            background-color: #ffc107;
+            color: black;
+        }
+
+            .btn-warning:hover {
+                background-color: #e0a800;
+            }
+    </style>
+</head>
+<body>
+    <div class="details-container">
+        <h2>User Details</h2>
+
+        <table>
+            <tr>
+                <th>Name:</th>
+                <td>@Model.Name</td>
+            </tr>
+            <tr>
+                <th>Email:</th>
+                <td>@Model.Email</td>
+            </tr>
+            <tr>
+                <th>Role:</th>
+                <td>@Model.Role</td>
+            </tr>
+            <tr>
+                <th>Phone:</th>
+                <td>@Model.Phone</td>
+            </tr>
+        </table>
+
+        <a asp-action="Index" asp-controller="Admin" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to List
+        </a>
+
+        <a asp-action="Edit" asp-route-id="@Model.User_Id" class="btn btn-warning">
+            <i class="fas fa-edit"></i> Edit
+        </a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,53 @@
+﻿@model IEnumerable<EchoPOS.Models.Inventory>
+@{
+    Layout = "~/Views/Shared/EchoPOS.cshtml";
+    ViewBag.Title = "Inventory Management";
+}
+
+<!-- Title Centered -->
+<h2 class="fw-bold text-center mt-4 mb-2">
+    <i class="bi bi-box-seam me-2"></i> Inventory Management
+</h2>
+
+<!-- Create Button -->
+<div class="text-center mb-4">
+    <a asp-action="Create" asp-controller="Inventory" class="btn btn-success">
+        <i class="bi bi-plus-circle-fill"></i> Add Inventory Item
+    </a>
+</div>
+
+<!-- Inventory Table -->
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Supplier Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ProductName</td>
+                <td>@item.Quantity</td>
+                <td>@item.Price</td>
+                <td>@item.SupplierName</td>
+                <td>
+                    <a asp-action="Edit" asp-controller="Inventory" asp-route-id="@item.InventoryID" class="btn btn-warning btn-sm me-1">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </a>
+                    <a asp-action="Details" asp-controller="Inventory" asp-route-id="@item.InventoryID" class="btn btn-info btn-sm me-1">
+                        <i class="bi bi-eye-fill"></i> Details
+                    </a>
+                    <a asp-action="Delete" asp-controller="Inventory" asp-route-id="@item.InventoryID" class="btn btn-danger btn-sm"
+                       onclick="return confirm('Are you sure you want to delete this item?');">
+                        <i class="bi bi-trash-fill"></i> Delete
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

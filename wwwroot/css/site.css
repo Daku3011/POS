@@ -1,0 +1,27 @@
+/* Ensure Center Panel Expands Properly */
+.center-panel {
+    flex-grow: 1;
+    min-width: 800px; /* Increased for better spacing */
+    margin-left: 260px; /* Space for left panel */
+    margin-right: 310px; /* Space for right panel */
+    display: flex;
+    flex-wrap: wrap; /* Allows wrapping */
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    gap: 25px; /* More spacing between cards */
+    overflow-y: auto;
+}
+
+/* Adjust Card Sizing for More Width */
+.card {
+    flex: 1 1 420px; /* Wider base size */
+    max-width: 480px; /* Increased max-width */
+    min-width: 400px; /* Prevents excessive shrinking */
+    padding: 20px; /* More padding for better appearance */
+    border: 1px solid #ddd;
+    text-align: center;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}

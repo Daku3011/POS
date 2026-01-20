@@ -1,0 +1,28 @@
+## [Visual Studio]
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+
+## [Build Artifacts]
+bin/
+obj/
+
+## [User-specific files]
+*.swp
+*.bak
+*.tmp
+*.log
+
+## [Publish]
+publish/
+*.pubxml
+
+## [Dotnet]
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## [OS]
+.DS_Store
+Thumbs.db

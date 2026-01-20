@@ -1,0 +1,36 @@
+﻿@model IEnumerable<EchoPOS.Models.Inventory>
+
+<h2>Inventory List</h2>
+
+<div class="mb-3">
+    <a asp-action="Create" class="btn btn-success">Add Inventory Item</a>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>SupplierName</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ProductName</td>
+                <td>@item.Quantity</td>
+                <td>@item.Price</td>
+                <td>@item.SupplierName</td> <!-- Ensure this property exists -->
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.InventoryID" class="btn btn-primary">Edit</a>
+                    <a asp-action="Details" asp-route-id="@item.InventoryID" class="btn btn-info">Details</a>
+                    <a asp-action="Delete" asp-route-id="@item.InventoryID" class="btn btn-danger"
+                       onclick="return confirm('Are you sure you want to delete this item?');">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

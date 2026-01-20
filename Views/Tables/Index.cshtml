@@ -1,0 +1,52 @@
+﻿@model IEnumerable<EchoPOS.Models.Tables>
+
+@{
+    ViewData["Title"] = "Tables";
+}
+
+<h1>Tables</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Table</a>
+</p>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-3 mb-4">
+            <!-- Hidden Form -->
+            <form id="form-@item.Table_Id" method="post" action="@Url.Action("Index", "POS_")" style="display: none;">
+                <input type="hidden" name="Table_Id" value="@item.Table_Id" />
+            </form>
+
+            <!-- Clickable Card -->
+            <div class="card shadow-sm border-0 table-card" data-table-id="@item.Table_Id" style="cursor: pointer;">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Table @item.Table_Number</h5>
+                    <p class="card-text">table_id: @item.Table_Id</p>
+                    <p class="card-text">Capacity: @item.Capacity</p>
+                    <p class="card-text">Status: <strong>@item.Status</strong></p>
+                    <p class="card-text"><small class="text-muted">Location: @item.Location</small></p>
+                    <hr />
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Edit" asp-route-id="@item.Table_Id" class="btn btn-warning btn-sm" onclick="event.stopPropagation();">Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.Table_Id" class="btn btn-info btn-sm" onclick="event.stopPropagation();">View</a>
+                        <a asp-action="Delete" asp-route-id="@item.Table_Id" class="btn btn-danger btn-sm" onclick="event.stopPropagation();">Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.table-card').forEach(card => {
+            card.addEventListener('click', function () {
+                const tableId = this.getAttribute('data-table-id');
+                const form = document.getElementById('form-' + tableId);
+                if (form) form.submit();
+            });
+        });
+    </script>
+}

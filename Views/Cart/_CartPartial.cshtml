@@ -1,0 +1,122 @@
+﻿@model List<EchoPOS.Models.CartView>
+
+@{
+    ViewBag.Title = "Cart";
+    var tableId = Model.FirstOrDefault()?.Table_Id ?? 0;
+}
+
+<h2>Your Cart</h2>
+
+@if (!Model.Any())
+{
+    <p>Your cart is empty.</p>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="cartBody">
+            @foreach (var item in Model)
+            {
+                <tr data-cart-id="@item.Cart_Id">
+                    <td>@item.Name</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <button class="btn btn-sm btn-secondary" onclick="updateQuantity(@item.Cart_Id, -1)">-</button>
+                            <span class="mx-2 quantity">@item.Quantity</span>
+                            <button class="btn btn-sm btn-secondary" onclick="updateQuantity(@item.Cart_Id, 1)">+</button>
+                        </div>
+                    </td>
+                    <td class="price">₹@item.Price</td>
+                    <td class="item-total">₹@(item.Quantity * item.Price)</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="removeCartItem(@item.Cart_Id)">Remove</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="mt-4">
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label class="form-label">Tax (%)</label>
+                <input type="number" id="tax" class="form-control" value="0" step="0.01" oninput="recalculateTotal()">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Discount (%)</label>
+                <input type="number" id="discount" class="form-control" value="0" step="0.01" oninput="recalculateTotal()">
+            </div>
+        </div>
+
+        <h3>Total: ₹<span id="totalPrice">0</span></h3>
+        <button class="btn btn-primary mt-2" onclick="submitOrder()">Submit Order</button>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        function updateQuantity(cartId, change) {
+            $.ajax({
+                url: '/Cart/UpdateQuantity',
+                method: 'POST',
+                data: { cartId, change },
+                success: function (response) {
+                    if (response.success) {
+                        loadCart(tableId);
+                    }
+                }
+            });
+        }
+
+        function removeCartItem(cartId) {
+            $.ajax({
+                url: '/Cart/RemoveItem',
+                method: 'POST',
+                data: { cartId },
+                success: function (response) {
+                    if (response.success) {
+                        loadCart(tableId);
+                    }
+                }
+            });
+        }
+
+        function submitOrder() {
+            $.ajax({
+                url: '/Cart/SubmitOrder',
+                method: 'POST',
+                data: { tableId },
+                success: function (response) {
+                    if (response.success) {
+                        window.location.href = "/Orders/Index"; // Redirect to the orders page
+                    }
+                }
+            });
+        }
+
+        function recalculateTotal() {
+            let total = 0;
+            $('.item-total').each(function () {
+                total += parseFloat($(this).text().replace('₹', ''));
+            });
+
+            const tax = parseFloat($('#tax').val());
+            const discount = parseFloat($('#discount').val());
+
+            total += total * tax / 100;
+            total -= total * discount / 100;
+
+            $('#totalPrice').text(total.toFixed(2));
+        }
+    </script>
+}
+    

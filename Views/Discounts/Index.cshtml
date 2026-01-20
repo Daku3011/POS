@@ -1,0 +1,35 @@
+﻿@model IEnumerable<EchoPOS.Models.Discounts>  
+
+<h2>Discounts</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Discount Type</th>
+            <th>Value</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var discount in Model)
+        {
+            <tr>
+                <td>@discount.Name</td>
+                <td>@discount.Discount_Type</td>
+                <td>@discount.Value</td>
+                <td>@discount.Start_Date</td>
+                <td>@discount.End_Date</td>
+                <td>
+                    <a href="@Url.Action("Edit", new { id = discount.Discount_Id })">Edit</a> |
+                    <a href="@Url.Action("Details", new { id = discount.Discount_Id })">Details</a> |
+                    <a href="@Url.Action("Delete", new { id = discount.Discount_Id })">Delete</a>
+                </td>
+            </tr>
+        }
+        <a href="@Url.Action("Create")" class="btn btn-primary">Create New Discount</a>
+    </tbody>
+</table>
+

@@ -1,0 +1,124 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kitchen Dashboard</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            overflow: hidden;
+        }
+
+        .page-layout {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #1a2a6c, #b21f1f);
+            color: white;
+            padding: 20px 10px;
+            overflow-y: auto;
+        }
+
+        .sidebar-button {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            width: 100%;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+            .sidebar-button:hover {
+                background-color: rgba(255, 255, 255, 0.2);
+                transform: translateX(5px);
+            }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            background-color: #dc3545;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-top: 20px;
+            transition: background 0.3s ease;
+        }
+
+            .sidebar a:hover {
+                background-color: #c82333;
+            }
+
+        .content {
+            flex: 1;
+            background: linear-gradient(180deg, #1a2a6c, #b21f1f);
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        #content-display {
+            background: linear-gradient(180deg, #1a2a6c, #b21f1f);
+            border-radius: 8px;
+            padding: 30px;
+            color: white;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+            min-height: 300px;
+        }
+
+        h2 {
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-layout">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <button class="sidebar-button" onclick="loadSection('@Url.Action("Orders", "KitchenDashBoard")')">Orders</button>
+            <button class="sidebar-button" onclick="loadSection('@Url.Action("Tables", "KitchenDashBoard")')">Tables</button>
+            <button class="sidebar-button" onclick="loadSection('@Url.Action("Menu", "KitchenDashBoard")')">Menu</button>
+            <button class="sidebar-button" onclick="loadSection('@Url.Action("Category", "KitchenDashBoard")')">Category</button>
+            <button class="sidebar-button" onclick="loadSection('@Url.Action("Inventory", "KitchenDashBoard")')">Inventory</button>
+            <button class="sidebar-button" onclick="loadSection('@Url.Action("Supplier", "KitchenDashBoard")')">Supplier</button>
+
+            <a href="@Url.Action("Index", "Login")">Logout</a>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <div id="content-display">
+                <h2>Welcome to the Kitchen Panel</h2>
+                <p>Select an option from the left panel to view details.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function loadSection(url) {
+            $("#content-display").html('<p>Loading...</p>');
+            $.get(url, function (data) {
+                $("#content-display").html(data);
+            }).fail(function (xhr) {
+                $("#content-display").html('<p>Error loading content. ' + xhr.status + ' - ' + xhr.statusText + '</p>');
+            });
+        }
+    </script>
+</body>
+</html>
