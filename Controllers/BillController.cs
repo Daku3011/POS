@@ -29,6 +29,19 @@ namespace EchoPOS.Controllers
             // Return the view with the list of bills
             return View(bills);
         }
+
+        [HttpGet]
+        public IActionResult GetPaymentSummary()
+        {
+            var summary = _billRepository.GetPaymentSummary();
+            return Json(new
+            {
+                cash = summary?.CashTotal ?? 0,
+                upi = summary?.UPITotal ?? 0,
+                card = summary?.CardTotal ?? 0,
+                grand = summary?.GrandTotal ?? 0
+            });
+        }
         [HttpPost]
         public IActionResult ClearPaymentSummary()
         {

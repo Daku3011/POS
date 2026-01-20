@@ -26,3 +26,4 @@ artifacts/
 ## [OS]
 .DS_Store
 Thumbs.db
+init_db_logs.txt

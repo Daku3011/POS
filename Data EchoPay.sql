@@ -1,4 +1,35 @@
 use EchoPay
+SET IDENTITY_INSERT Category ON
+INSERT INTO Category (Category_Id, Name, Description) VALUES
+(1, 'Chaat', 'Spicy and tangy Indian street food'),
+(2, 'Sandwich', 'Freshly prepared sandwiches'),
+(3, 'Pizza', 'Delicious pizzas with various toppings'),
+(4, 'Finger Bites', 'Crispy snacks and appetizers'),
+(5, 'Croissants', 'Buttery and flaky French pastries'),
+(6, 'Pizza 2', 'Additional pizza varieties'),
+(7, 'Salads', 'Fresh and healthy greens'),
+(8, 'Dessert', 'Sweet treats and desserts'),
+(9, 'Cheesecake', 'Creamy and rich cheesecakes'),
+(10, 'Quick Bites', 'Popular Indian snacks'),
+(11, 'Chef Special', 'Exclusive dishes recommended by our chef'),
+(12, 'Coolers', 'Refreshing chilled beverages'),
+(13, 'Smoothies', 'Thick and nutritious fruit blends'),
+(14, 'Shakes', 'Creamy milkshakes in many flavors'),
+(15, 'Wraps', 'Tasty fillings wrapped in tortillas'),
+(16, 'Maggie', 'Everyone s favorite instant noodles'),
+(17, 'Burger', 'Juicy burgers with various patties'),
+(18, 'Coffee', 'Premium brewed coffee'),
+(19, 'Soda', 'Chilled carbonated soft drinks'),
+(20, 'Live Shots', 'Energetic mini-beverages'),
+(21, 'Hot Tea', 'Traditional hot tea varieties'),
+(22, 'Chinese', 'Indo-Chinese delicacies'),
+(23, 'Rice Bowls', 'Complete meals served in a bowl'),
+(24, 'Tandoori Fresh', 'Grilled items from the clay oven'),
+(25, 'Paratha', 'Stuffed and layered Indian flatbreads'),
+(26, 'Sizzler', 'Hot sizzling platters'),
+(27, 'Roti', 'Assorted Indian breads'),
+(28, 'Main Course', 'Traditional Indian main course dishes')
+SET IDENTITY_INSERT Category OFF
 
 -- Insert Data into Menu Table
 Select * from Menu
@@ -136,13 +167,13 @@ VALUES
 --  (Category 11)
 INSERT INTO Menu (Category_Id, Name, Description, Price, Image_Url, Availability)
 VALUES
-(11, 'Chef�s Special Pasta', 'Unique pasta creation of the day', 250.00, 'https://example.com/images/chefs_special_pasta.jpg', 1),
+(11, 'ChefÂs Special Pasta', 'Unique pasta creation of the day', 250.00, 'https://example.com/images/chefs_special_pasta.jpg', 1),
 (11, 'Mystery Sandwich', 'A surprise sandwich with unique ingredients', 200.00, 'https://example.com/images/mystery_sandwich.jpg', 1),
 (11, 'Spicy Nachos Surprise', 'Loaded nachos with a mystery twist', 220.00, 'https://example.com/images/spicy_nachos_surprise.jpg', 1),
 (11, 'Fusion Tacos', 'A new taco creation every day', 230.00, 'https://example.com/images/fusion_tacos.jpg', 1),
 (11, 'Experimental Shake', 'A new shake flavor to surprise your taste buds', 180.00, 'https://example.com/images/experimental_shake.jpg', 1),
 (11, 'Sweet & Spicy Popcorn', 'Caramel popcorn with a hint of spice', 150.00, 'https://example.com/images/sweet_spicy_popcorn.jpg', 1),
-(11, 'Gourmet Wrap', 'A wrap with chef�s secret ingredients', 240.00, 'https://example.com/images/gourmet_wrap.jpg', 1),
+(11, 'Gourmet Wrap', 'A wrap with chefÂs secret ingredients', 240.00, 'https://example.com/images/gourmet_wrap.jpg', 1),
 (11, 'Surprise Brownie', 'A brownie with a special filling', 170.00, 'https://example.com/images/surprise_brownie.jpg', 1),
 (11, 'Mysterious Dessert', 'A sweet treat with unknown flavors', 200.00, 'https://example.com/images/mysterious_dessert.jpg', 1),
 (11, 'Secret Beverage', 'A drink specially created by the chef', 190.00, 'https://example.com/images/secret_beverage.jpg', 1);
@@ -174,7 +205,6 @@ VALUES
 (13, 'Green Detox', 'Spinach, banana, and apple smoothie', 210.00, 'https://example.com/images/green_detox_smoothie.jpg', 1),
 (13, 'Vanilla Chia Shake', 'Vanilla smoothie with chia seeds', 220.00, 'https://example.com/images/vanilla_chia_shake.jpg', 1),
 (13, 'Raspberry Yogurt', 'Tart raspberry smoothie with yogurt', 250.00, 'https://example.com/images/raspberry_yogurt_smoothie.jpg', 1);
-
 INSERT INTO Menu (Category_Id, Name, Description, Price, Image_Url, Availability)
 VALUES
 (14, 'Chocolate Shake', 'Thick and creamy chocolate milkshake', 180.00, 'https://images.unsplash.com/photo-1606756777436-91c2015b3d94', 1),
@@ -187,7 +217,6 @@ VALUES
 (14, 'Nutella Shake', 'Nutella blended shake with milk', 250.00, 'https://images.unsplash.com/photo-1576515416547-2315e31f49a3', 1),
 (14, 'Banana Shake', 'Sweet banana-flavored shake', 170.00, 'https://images.unsplash.com/photo-1596560548465-7b1cf2c00a04', 1),
 (14, 'Biscoff Shake', 'Biscoff-flavored milkshake', 260.00, 'https://images.unsplash.com/photo-1601314165404-006f9829e163', 1);
-
 INSERT INTO Menu (Category_Id, Name, Description, Price, Image_Url, Availability)
 VALUES
 (15, 'Paneer Tikka Wrap', 'Grilled paneer wrapped in a tortilla', 220.00, 'https://images.unsplash.com/photo-1630547038751-21e1d91880a8', 1),
@@ -397,8 +426,7 @@ VALUES
 
 
  -----------------------------------------------------------------------------------------------------------------
-
- INSERT INTO Tables (Table_Number, Capacity, Status, Location) 
+INSERT INTO Tables (Table_Number, Capacity, Status, Location) 
 VALUES
     (1, 2, 'available', 'Inside Hall - Near Entrance'),
     (2, 4, 'available', 'Inside Hall - Center'),
@@ -417,24 +445,22 @@ VALUES
     (15, 8, 'available', 'Rooftop - Sunset View');
  
  ---------------------------------------------------------
-
- INSERT INTO Users (Name, Email, Password, Role, Phone, Created_At)
+INSERT INTO Users (Name, Email, Password, Role, Phone, Created_At)
 VALUES
-    ('Pratham Modi', 'Pratham@gmail.com', 'Admin@123', 'admin', '9876543210', GETDATE()),
+    ('Pratham Modi', 'Pratham@gmail.com', HASHBYTES('SHA2_256', 'Admin@123'), 'admin', '9876543210', GETDATE()),
 
-    ('Darshan', 'Darshan@gmail.com', 'Waiter@123', 'waiter', '9876543211', GETDATE()),
-    ('Krutarth', 'Krutarth@gmail.com', 'Waiter@123', 'waiter', '9876543212', GETDATE()),
-    ('Jayesh', 'Jayesh@gmail.com', 'Waiter@123', 'waiter', '9876543213', GETDATE()),
-    ('Rahin', 'Rahin@gmail.com', 'Waiter@123', 'waiter', '9876543214', GETDATE()),
+    ('Darshan', 'Darshan@gmail.com', HASHBYTES('SHA2_256', 'Waiter@123'), 'waiter', '9876543211', GETDATE()),
+    ('Krutarth', 'Krutarth@gmail.com', HASHBYTES('SHA2_256', 'Waiter@123'), 'waiter', '9876543212', GETDATE()),
+    ('Jayesh', 'Jayesh@gmail.com', HASHBYTES('SHA2_256', 'Waiter@123'), 'waiter', '9876543213', GETDATE()),
+    ('Rahin', 'Rahin@gmail.com', HASHBYTES('SHA2_256', 'Waiter@123'), 'waiter', '9876543214', GETDATE()),
 
-    ('Rachit ', 'Rachit@gmail.com', 'Chef@123', 'chef', '9876543215', GETDATE()),
-    ('Sahil', 'Sahil@gmail.com', 'Chef@123', 'chef', '9876543216', GETDATE()),
+    ('Rachit ', 'Rachit@gmail.com', HASHBYTES('SHA2_256', 'Chef@123'), 'chef', '9876543215', GETDATE()),
+    ('Sahil', 'Sahil@gmail.com', HASHBYTES('SHA2_256', 'Chef@123'), 'chef', '9876543216', GETDATE()),
 
-    ('Apurva', 'Apurva@gmail.com', 'Cashier@123', 'cashier', '9876543217', GETDATE()),
-    ('Vrushank', 'Vrushank@gmail.com', 'Cashier@123', 'cashier', '9876543218', GETDATE());
+    ('Apurva', 'Apurva@gmail.com', HASHBYTES('SHA2_256', 'Cashier@123'), 'cashier', '9876543217', GETDATE()),
+    ('Vrushank', 'Vrushank@gmail.com', HASHBYTES('SHA2_256', 'Cashier@123'), 'cashier', '9876543218', GETDATE());
 
 ------------------------------------------------------------------------------------------------
-
 INSERT INTO Suppliers (Name, Contact, Email, Address) VALUES
 -- Grocery Suppliers
 ('Shree Ram Grocery', '0261-2345671', 'shreeramgrocery@gmail.com', '10 Market Road, Surat, Gujarat, 395001'),
@@ -462,7 +488,6 @@ INSERT INTO Suppliers (Name, Contact, Email, Address) VALUES
 ('Eco-Packaging Solutions', '0261-2345685', 'ecopackaging@gmail.com', '140 Greenway Road, Surat, Gujarat, 395015');
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 INSERT INTO Inventory (ProductName, Quantity, Price, Supplier_ID, LastUpdated) 
 VALUES
 -- Shree Ram Grocery (2)
@@ -572,7 +597,6 @@ VALUES
 
 
 ---------------------------------------------------------------------------------------------------------------------------------
-
 INSERT INTO Employee_Shifts (User_Id, Shift_Start, Shift_End, Role)
 VALUES
     (1, '2025-04-02 09:00:00', '2025-04-02 17:00:00', 'admin'),
@@ -588,7 +612,6 @@ VALUES
     (8, '2025-04-02 09:00:00', '2025-04-02 17:00:00', 'cashier'),
     (9, '2025-04-02 09:00:00', '2025-04-02 17:00:00', 'cashier');
 ------------------------------------------------------------------------------------------------------------------------------------------------
-
 INSERT INTO Discounts (Name, Discount_Type, Value, Start_Date, End_Date)
 VALUES
     ('Opening', 'percentage', 20.00, '2025-01-01', '2025-01-31'),  -- 20% Discount
@@ -666,18 +689,18 @@ INSERT INTO Expenses (Category, Amount, Date, Note) VALUES
 INSERT INTO Expenses (Category, Amount, Date, Note) VALUES
 ('Furniture', 8500.00, DATEADD(DAY, -14, GETDATE()), 'New table & chairs for dining'),
 ('Furniture', 4200.00, DATEADD(DAY, -26, GETDATE()), 'Cashier desk replacement'),
-('Furniture', 6500.00, DATEADD(DAY, -8, GETDATE()), 'Outdoor seating bench'),
+('Furniture', 6500.00, DATEADD(DAY, -8, GETDATE()), 'Outdoor seating bench');
 
 -- Kitchen utensils
 INSERT INTO Expenses (Category, Amount, Date, Note) VALUES
 ('Kitchen Utensils', 2700.00, DATEADD(DAY, -9, GETDATE()), 'Stainless steel plates & bowls'),
 ('Kitchen Utensils', 1450.00, DATEADD(DAY, -20, GETDATE()), 'Tava, Kadai, spatula sets'),
-('Kitchen Utensils', 3100.00, DATEADD(DAY, -5, GETDATE()), 'Replacement of broken items'),
+('Kitchen Utensils', 3100.00, DATEADD(DAY, -5, GETDATE()), 'Replacement of broken items');
 
 -- Storage & Shelving
 INSERT INTO Expenses (Category, Amount, Date, Note) VALUES
 ('Furniture', 3200.00, DATEADD(DAY, -12, GETDATE()), 'Wooden rack for storage'),
-('Furniture', 1800.00, DATEADD(DAY, -3, GETDATE()), 'New cutlery drawers'),
+('Furniture', 1800.00, DATEADD(DAY, -3, GETDATE()), 'New cutlery drawers');
 
 -- Kitchen tools or small equipment
 INSERT INTO Expenses (Category, Amount, Date, Note) VALUES

@@ -138,13 +138,13 @@
             </div>
 
             <div class="form-group">
-                <label for="role">Role</label>
-                <select id="role" name="role" required>
+                <label asp-for="Role"></label>
+                <select asp-for="Role" class="form-control" required>
                     <option value="">-- Select Role --</option>
-                    <option value="admin" @@(Model.Role == "admin" ? "selected" : "")>Admin</option>
-                    <option value="waiter" @@(Model.Role == "waiter" ? "selected" : "")>Waiter</option>
-                    <option value="cashier"@@(Model.Role == "cashier" ? "selected" : "")>Cashier</option>
-                    <option value="chef" @@(Model.Role == "chef" ? "selected" : "")>Chef</option>
+                    <option value="admin">Admin</option>
+                    <option value="waiter">Waiter</option>
+                    <option value="cashier">Cashier</option>
+                    <option value="chef">Chef</option>
                 </select>
             </div>
 
