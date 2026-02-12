@@ -54,6 +54,8 @@ dotnet run
 docker compose up --build
 ```
 
+### 5. then go to http://localhost:5000 in your browser
+
 ## 🔐 Default Credentials
 
 | Role | Username | Password |
